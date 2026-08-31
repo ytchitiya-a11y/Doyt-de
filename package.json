@@ -1,0 +1,26 @@
+{
+  "name": "instant-delivery-backend",
+  "version": "1.0.0",
+  "description": "MVP Backend for Instant Delivery System - Prayagraj (Node.js + Express + PostgreSQL + Firebase Auth)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "firebase-admin": "^12.3.1",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "socket.io": "^4.7.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "cloudinary": "^2.4.0",
+    "multer": "^1.4.5-lts.1",
+    "razorpay": "^2.9.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "info": {
+    "name": "Instant Delivery Backend - MVP",
+    "description": "Test the complete order flow without frontend. Set {{baseUrl}}, {{customerToken}}, {{deliveryToken}}, {{adminToken}} in the collection variables (get tokens from Firebase after login).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api" },
+    { "key": "customerToken", "value": "" },
+    { "key": "deliveryToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "orderId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": { "method": "GET", "url": "{{baseUrl}}/../health" }
+    },
+    {
+      "name": "2. Auth - Customer Sync",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Customer\",\n  \"address\": \"Civil Lines, Prayagraj\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/auth/customer/sync"
+      }
+    },
+    {
+      "name": "3. Auth - Delivery Partner Sync",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{deliveryToken}}" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Rider\",\n  \"vehicle_type\": \"bike\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/auth/delivery/sync"
+      }
+    },
+    {
+      "name": "4. Products - Get Menu",
+      "request": { "method": "GET", "url": "{{baseUrl}}/products" }
+    },
+    {
+      "name": "5. Orders - Place Order (Customer)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [{ \"product_id\": 1, \"quantity\": 2 }],\n  \"delivery_address\": \"Civil Lines, Prayagraj\",\n  \"payment_method\": \"cod\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/orders"
+      }
+    },
+    {
+      "name": "6. Delivery - Get Assigned Orders",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{deliveryToken}}" }],
+        "url": "{{baseUrl}}/delivery/orders"
+      }
+    },
+    {
+      "name": "7. Delivery - Accept Order",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{deliveryToken}}" }],
+        "url": "{{baseUrl}}/delivery/orders/{{orderId}}/accept"
+      }
+    },
+    {
+      "name": "8. Delivery - Mark Picked Up",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{deliveryToken}}" }],
+        "url": "{{baseUrl}}/delivery/orders/{{orderId}}/picked-up"
+      }
+    },
+    {
+      "name": "9. Delivery - Mark Delivered",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{deliveryToken}}" }],
+        "url": "{{baseUrl}}/delivery/orders/{{orderId}}/delivered"
+      }
+    },
+    {
+      "name": "10. Orders - Track Order (Customer)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+        "url": "{{baseUrl}}/orders/{{orderId}}"
+      }
+    },
+    {
+      "name": "11. Admin - Dashboard Stats",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+        "url": "{{baseUrl}}/admin/stats"
+      }
+    },
+    {
+      "name": "12. Admin - Get All Orders",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+        "url": "{{baseUrl}}/admin/orders"
+      }
+    },
+    {
+      "name": "13. Admin - Add Product (with Image)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "name", "value": "Chola Bhatura", "type": "text" },
+            { "key": "category", "value": "food", "type": "text" },
+            { "key": "price", "value": "60", "type": "text" },
+            { "key": "stock", "value": "50", "type": "text" },
+            { "key": "image", "type": "file", "src": "" }
+          ]
+        },
+        "url": "{{baseUrl}}/admin/products"
+      }
+    },
+    {
+      "name": "14. Payments - Create Razorpay Order",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+        "body": { "mode": "raw", "raw": "{\n  \"order_id\": {{orderId}}\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/payments/create-order"
+      }
+    },
+    {
+      "name": "15. Payments - Verify Payment",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"razorpay_order_id\": \"\",\n  \"razorpay_payment_id\": \"\",\n  \"razorpay_signature\": \"\",\n  \"order_id\": {{orderId}}\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/payments/verify"
+      }
+    }
+  ]
+}
